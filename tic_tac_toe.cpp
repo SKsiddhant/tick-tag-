@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 
 using namespace std;
 
@@ -47,7 +48,18 @@ void playGame() {
 
     while (!gameOver) {
         cout << "Player " << player << ", enter your move (1-9): ";
-        cin >> move;
+        if (!(cin >> move)) {
+            // End of input: stop instead of looping forever.
+            if (cin.eof()) {
+                cout << "\nInput closed, game aborted.\n";
+                return;
+            }
+            // Non-numeric input: without clearing the error state, cin keeps failing and this loop never ends.
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid move! Please enter a number from 1 to 9.\n";
+            continue;
+        }
 
         if (move < 1 || move > 9) {
             cout << "Invalid move! Try again.\n";
@@ -79,5 +91,5 @@ void playGame() {
 
 int main() {
     playGame();
-    return 0;
+    return 0;
 }
